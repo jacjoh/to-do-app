@@ -15,8 +15,29 @@ class TestTODOApp(unittest.TestCase):
         self.assertTrue(len(self.app.tasks) == 1)
         self.assertEqual(self.app.tasks[1], "Adding a task")
 
+        expected_result = """{"1": "Adding a task"}"""
+        filename = 'backup.txt'
+
+        with open(filename, 'r') as f:
+            read_data = f.read()
+        f.close()    
+
+        self.assertEqual(expected_result, read_data)    
+
     def test_do(self):
-        pass
+        self.app.add("Adding a Task")
+        self.app.do("#1")
+        self.assertTrue(len(self.app.tasks) == 0)
+        
+        expected_result = """"""
+        filename = "backup.txt"
+
+        with open(filename, 'r') as f:
+            read_data = f.read()
+        f.close()
+
+        self.assertEqual(expected_result, read_data)
+
 
 if __name__ == '__main__':
     unittest.main()

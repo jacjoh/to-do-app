@@ -1,6 +1,6 @@
 #!/usr/bin/env python3.6
 
-from collections import OrderedDict
+import json
 
 class TODO:
     def __init__(self):
@@ -19,14 +19,48 @@ class TODO:
                 break
             key += 1
 
+        self.write_to_file()
+
         print("#{0} {1}".format(key, argument))
 
-    def do(self, id):
-        pass
+    
+    def do(self, key):
+        print(key)
 
+        key = key.strip('#')
+        print(self.tasks)
+        print(key)
+
+        if key not in self.tasks:
+            print("there is no such task")
+
+        task = self.tasks.pop(key)
+
+        self.write_to_file()
+
+        print("completed #{0} {1}".format(key, task))
+
+    
     def print_TODOs(self):
-        for key, task in self.tasks.items():
-            print("#{0} {1}".format(key, task)) 
+        if(len(self.tasks) == 0):
+            print("there are no tasks")
+
+        with open('backup.txt', 'r') as f:
+            read_data = f.read() 
+        f.close()    
+        
+        dictionary = json.loads(read_data)
+
+        for key, task in dictionary.items():
+            print("#{0} {1}".format(key, task))
+
+
+    def write_to_file(self):
+        json_object = json.dumps(self.tasks)
+
+        with open('backup.txt', 'w') as f:
+            f.write(json_object)
+        f.close()
         
 
 def shell():
@@ -39,12 +73,21 @@ def shell():
     choice = ''
     todo = TODO()
 
+    with open('backup.txt', 'r') as f:
+        read_data = f.read() 
+    f.close()    
+        
+    dictionary = json.loads(read_data)
+
+    todo.tasks = dictionary
+
     while(choice != 'quit'):
         choice = input("> ")
         
         argument = choice.split(' ', 1)
 
         operator = argument[0].lower()
+        #print(argument[1])
 
         if(operator == "add"):
             todo.add(argument[1])
